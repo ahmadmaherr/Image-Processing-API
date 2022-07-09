@@ -32,19 +32,15 @@ imageRouter.get('/:imgName', (req, res) => __awaiter(void 0, void 0, void 0, fun
     const imgNames = yield fs.promises.readdir('images');
     const sourceImg = path.join(__dirname, '../', '../', 'images', `${imgName}.jpg`);
     const distinationIMG = path.join(__dirname, '../', '../', 'croppedImages', `${imgName}-${imgWidth}-${imgHeight}.jpg`);
-    try {
-        if (!imgNames.includes(imgName + '.jpg'))
-            throw new Error();
-        else if (!imgWidth && !imgHeight) {
-            res.status(200).sendFile(sourceImg);
-        }
-        else {
-            yield (0, cropper_1.default)(sourceImg, distinationIMG, imgWidth, imgHeight);
-            yield res.status(200).sendFile(distinationIMG);
-        }
+    if (fs.existsSync(distinationIMG)) {
+        res.status(200).sendFile(distinationIMG);
     }
-    catch (error) {
-        res.status(404).send(errorMessage);
+    else if (!imgWidth && !imgHeight) {
+        res.status(200).sendFile(sourceImg);
+    }
+    else {
+        yield (0, cropper_1.default)(sourceImg, distinationIMG, imgWidth, imgHeight);
+        yield res.status(200).sendFile(distinationIMG);
     }
 }));
 exports.default = imageRouter;

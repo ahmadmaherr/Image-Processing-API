@@ -35,17 +35,16 @@ imageRouter.get(
       `${imgName}-${imgWidth}-${imgHeight}.jpg`
     );
 
-    try {
-      if (!imgNames.includes(imgName + '.jpg')) throw new Error();
-      else if (!imgWidth && !imgHeight) {
-        res.status(200).sendFile(sourceImg);
-      } else {
-        await imgCropper(sourceImg, distinationIMG, imgWidth, imgHeight);
-        await res.status(200).sendFile(distinationIMG);
-      }
-    } catch (error) {
-      res.status(404).send(errorMessage);
+  
+    if (fs.existsSync(distinationIMG)) {
+      res.status(200).sendFile(distinationIMG); 
+    }  else if (!imgWidth && !imgHeight) {
+      res.status(200).sendFile(sourceImg);
+    } else {
+      await imgCropper(sourceImg, distinationIMG, imgWidth, imgHeight);
+      await res.status(200).sendFile(distinationIMG);
     }
+
   }
 );
 
